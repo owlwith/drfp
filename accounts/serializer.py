@@ -14,13 +14,25 @@ class UserRegisterSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(max_length=128)
 
-    def get_cleaned_data(self):
-        data_dict = super().get_cleaned_data()
-        data_dict['username'] = self.validated_data.get('username', '')
-        data_dict['email'] = self.validated_data.get('email', '')
-        data_dict['password'] = self.validated_data.get('password', '')
+    # def get_cleaned_data(self):
+    #     data_dict = super().get_cleaned_data()
+    #     data_dict['username'] = self.validated_data.get('username', '')
+    #     data_dict['email'] = self.validated_data.get('email', '')
+    #     data_dict['password'] = self.validated_data.get('password', '')
+    #
+    #     return data_dict
 
-        return data_dict
+    def create(self, validated_data):
+        username = validated_data.get('username')
+        email = validated_data.get('email')
+        password = validated_data.get('password')
+        user = User(
+            username = username,
+            email = email
+        )
+        user.set_password(password)
+        user.save
+        return user
 
 class UserLoginSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=40)

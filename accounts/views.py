@@ -6,30 +6,43 @@ from rest_framework import status, generics
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from accounts.serializer import UserRegisterSerializer, UserSerializer, UserLoginSerializer
 
 
+# @permission_classes([AllowAny])
+# class Registration(generics.GenericAPIView):
+#     serializer_class = UserRegisterSerializer
+#
+#     def post(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         if not serializer.is_valid(raise_exception=True):
+#             return Response({"message": "Request Body Error."}, status=status.HTTP_409_CONFLICT)
+#
+#         serializer.is_valid(raise_exception=True)
+#
+#         user = serializer.save(request)
+#
+#         return Response(
+#             {
+#                 "user": UserSerializer(
+#                     user, context=self.get_serializer_context()
+#                 ).data
+#             },
+#                 status=status.HTTP_201_CREATED,
+#         )
+
 @permission_classes([AllowAny])
-class Registration(generics.GenericAPIView):
-    serializer_class = UserRegisterSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if not serializer.is_valid(raise_exception=True):
-            return Response({"message": "Request Body Error."}, status=status.HTTP_409_CONFLICT)
-
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save(request)
-        return Response(
-            {
-                "user": UserSerializer(
-                    user, context=self.get_serializer_context()
-                ).data
-            },
-                status=status.HTTP_201_CREATED,
-        )
-
+class Registration(APIView):
+    def post(self, request):
+        serializer = UserRegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @permission_classes([AllowAny])
 class Login(generics.GenericAPIView):

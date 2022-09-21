@@ -23,7 +23,6 @@ class Registration(generics.GenericAPIView):
         user = serializer.save(request)
         return Response(
             {
-
                 "user": UserSerializer(
                     user, context=self.get_serializer_context()
                 ).data

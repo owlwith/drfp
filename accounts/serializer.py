@@ -12,11 +12,13 @@ User = get_user_model()
 class UserRegisterSerializer(serializers.Serializer):
     username = serializers.CharField(required=False, max_length=50)
     email = serializers.EmailField()
+    password = serializers.CharField(max_length=128)
 
     def get_cleaned_data(self):
         data_dict = super().get_cleaned_data()
         data_dict['username'] = self.validated_data.get('username', '')
         data_dict['email'] = self.validated_data.get('email', '')
+        data_dict['password'] = self.validated_data.get('password', '')
 
         return data_dict
 
